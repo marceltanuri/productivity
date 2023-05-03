@@ -24,8 +24,26 @@ module.exports = class JiraClient {
         await this.page.goto(`https://${process.env.jira_host}/login?login_hint=${process.env.jira_username}&prompt=none&continue=https://${process.env.jira_company_host}/secure/BrowseProjects.jspa?selectedProjectType=software`);
         await this.#submitUsernameForm()
         await this.#submitPasswordForm()
-
+        
         return this
+    }
+
+    async getCookies() {
+        console.log("Extracting cookies from response...")
+        const client = await this.page.target().createCDPSession()
+        return (await client.send('Network.getAllCookies')).cookies
+    }
+
+    async getCookiesAsString() {
+        const cookies = await this.getCookies()
+
+        let cookiesAsString = ""
+
+        for (const cookie of cookies) {
+            cookiesAsString += `${cookie.name}=${cookie.value}; `
+        }
+
+        return cookiesAsString;
     }
 
 

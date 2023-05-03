@@ -8,9 +8,21 @@ module.exports = async function start(port) {
   console.log("Starting Jira client...")
   const jiraClient = await initJiraClient()
 
-  router.get('/', async function (req, res) {
-    let resBody = JSON.parse(await jiraClient.callService(req.query.endpoint))
-    res.send(resBody)
+  router.get('/:endpoint*', async function (req, resp) {
+
+    const jiraCookies = await jiraClient.getCookiesAsString()
+
+    fetch(`https://${process.env.jira_company_host}/${req.params.endpoint}/${req.params[0]}`, {
+      "headers": {
+        "cookie": `${jiraCookies}`
+      },
+      "body": null,
+      "method": "GET"
+    }).then(res => {
+      res.json().then(res => {
+        resp.send(res)
+      })
+    })
   })
 
   app.use('/', router);
