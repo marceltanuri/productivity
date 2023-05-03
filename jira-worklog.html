@@ -1,7 +1,13 @@
 <script>
     const DFLT_RANGE_IN_DAYS = 15
 
-    const jiraHost = "liferay.atlassian.net"
+    let jiraHost = localStorage.getItem("jiraHost")
+
+    if (jiraHost == undefined){
+        jiraHost = prompt("Please enter the Jira Host address. For example: mycompany.atlassian.net")
+    }
+
+    localStorage.setItem("jiraHost", jiraHost)
 
     const reportRangeInDays = DFLT_RANGE_IN_DAYS
 
