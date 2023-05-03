@@ -1,0 +1,20 @@
+<script>
+    import open from 'open'
+
+    const DFLT_RANGE_IN_DAYS = 15
+
+    const jiraHost = "liferay.atlassian.net"
+
+    const reportRangeInDays = DFLT_RANGE_IN_DAYS
+
+
+    const todayDateObj = new Date()
+
+    const endDate = todayDateObj.toISOString().split("T")[0]
+    let startDateObj = new Date()
+    startDateObj.setDate(startDateObj.getDate() - parseInt(reportRangeInDays))
+
+    const startDate = startDateObj.toISOString().split("T")[0]
+
+    window.location = `https://${jiraHost}/plugins/servlet/ac/jira-timesheet-plugin/timereports#!showWeekends=true&startDate=${startDate}&endDate=${endDate}`
+</script>
