@@ -29,7 +29,6 @@ module.exports = class JiraClient {
     }
 
     async getCookies() {
-        console.log("Extracting cookies from response...")
         const client = await this.page.target().createCDPSession()
         return (await client.send('Network.getAllCookies')).cookies
     }

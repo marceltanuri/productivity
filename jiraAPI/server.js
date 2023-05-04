@@ -2,26 +2,73 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const JiraClient = require('./JiraClient')
+const bodyParser = require('body-parser')
 
 module.exports = async function start(port) {
 
   console.log("Starting Jira client...")
   const jiraClient = await initJiraClient()
 
-  router.get('/:endpoint*', async function (req, resp) {
+  var jsonParser = bodyParser.json()
+
+  router.get('/:endpoint*', async function (req, res) {
 
     const jiraCookies = await jiraClient.getCookiesAsString()
 
     fetch(`https://${process.env.jira_company_host}/${req.params.endpoint}/${req.params[0]}`, {
       "headers": {
-        "cookie": `${jiraCookies}`
+        "cookie": `${jiraCookies}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
-      "body": null,
+      "body": req.body,
       "method": "GET"
-    }).then(res => {
-      res.json().then(res => {
-        resp.send(res)
-      })
+    }).then(fetchResponse => {
+
+      sendResponse(res, fetchResponse)
+
+    })
+  })
+
+  router.post('/:endpoint*', jsonParser, async function (req, res) {
+
+    const jiraCookies = await jiraClient.getCookiesAsString()
+    console.log(req.body)
+
+    fetch(`https://${process.env.jira_company_host}/${req.params.endpoint}/${req.params[0]}`, {
+      "headers": {
+        "cookie": `${jiraCookies}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      "body": req.body,
+      "method": "POST"
+
+    }).then(fetchResponse => {
+
+      sendResponse(res, fetchResponse)
+
+    })
+  })
+
+  router.put('/:endpoint*', jsonParser, async function (req, res) {
+
+    const jiraCookies = await jiraClient.getCookiesAsString()
+    console.log(req.body)
+
+    fetch(`https://${process.env.jira_company_host}/${req.params.endpoint}/${req.params[0]}`, {
+      "headers": {
+        "cookie": `${jiraCookies}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      "body": req.body,
+      "method": "PUT"
+
+    }).then(fetchResponse => {
+
+      sendResponse(res, fetchResponse)
+
     })
   })
 
@@ -33,6 +80,20 @@ module.exports = async function start(port) {
   app.listen(process.env.port || port);
 
   console.log(`Running at Port ${port}`);
+
+}
+
+function sendResponse(httpResponse, responseObj) {
+
+  if (responseObj.ok) {
+    responseObj.json().then(res => {
+      httpResponse.send(res)
+    })
+  }
+
+  else {
+    httpResponse.send(responseObj.status)
+  }
 
 }
 

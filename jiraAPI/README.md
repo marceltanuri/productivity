@@ -1,6 +1,6 @@
 # Jira Client
 
-It creates a proxy in front of Jira REST API. It was motivated due to some scenarios where Rest API with basic auth is not available and oAuth is not configured.
+It creates a proxy in front of Jira REST API. It was motivated due to some scenarios where JIRA Rest API is not available through basicAuth and/or oAuth is not configured.
 
 ## How it works
 
@@ -8,13 +8,13 @@ It creates a proxy in front of Jira REST API. It was motivated due to some scena
 ```
     Login page is opened, username and password are submited > 
     
-        Once authenticated, the automated browser has permission to access Jira API
+        Once authenticated, the automated browser recieves cookies containing valid session tokens
 ```
 
 ### * A webserver is started
 ```
-The webserver role as a proxy > 
-    requests sent to the webserver are internally redirected to the automated browser
+The nodeJS webserver role as a proxy > 
+    requests sent to the webserver are internally redirected to JIRA API, those cookies recieved by the automated browser are user at this point.
 ```
 
 ### Configure and start your container
@@ -45,8 +45,16 @@ ____________
 
 ### The server will be available at localhost:3001
 
+test:
+
+http://localhost:3001/rest/api/3/serverInfo
+
 ____________
 
 
 ### Docker image
 https://hub.docker.com/repository/docker/marceltanuri/jira-client/tags?page=1&ordering=last_updated
+
+
+### JIRA API Doc
+https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#version
