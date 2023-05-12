@@ -21,7 +21,7 @@ module.exports = class JiraClient {
 
     async doAuth() {
         console.log("Authenticating...")
-        await this.page.goto(`https://${process.env.jira_host}/login?login_hint=${process.env.jira_username}&prompt=none&continue=https://${process.env.jira_company_host}/secure/BrowseProjects.jspa?selectedProjectType=software`);
+        await this.page.goto(`https://${process.env.jira_host}/login?login_hint=${process.env.jira_username}&prompt=none&continue=https://${process.env.jira_company_host}/rest/api/3/serverInfo`);
         await this.#submitUsernameForm()
         await this.#submitPasswordForm()
         
